@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.quarkus.dbSQL.model.Person;
 import com.quarkus.dbSQL.repository.PersonRepository;
 import com.quarkus.dbSQL.service.IPersonService;
+import io.quarkus.panache.common.Parameters;
 
 @ApplicationScoped
 public class PersonService implements IPersonService {
@@ -37,11 +38,17 @@ public class PersonService implements IPersonService {
     @Override
     public String savePerson(Person person) {
         String SaveValidate = "";
-        String dniValidate = repository.findById(person.getId()).getDNI();
+        String dniValidate = "";
+        try {
+            dniValidate = repository.findById(person.getId()).getDNI();
+        }catch (Exception e){
+            dniValidate = "";
+        }
+        try{
         if (dniValidate.equals("") || dniValidate.equals(null)) {
-            if (person.getId() == 0 || person.getName() == ""
-                    || person.getName() == null || person.getLastName() == ""
-                    || person.getLastName() == null || person.getAge() == 0) {
+            if (person.getId() == 0 || person.getName().equals("")
+                    || person.getName().equals(null)  || person.getLastName().equals("")
+                    || person.getLastName().equals(null)  || person.getAge() == 0) {
                 SaveValidate = "No se pudo guardar, revise los datos de entrada";
             } else {
                 repository.persist(person);
@@ -49,6 +56,9 @@ public class PersonService implements IPersonService {
             }
         } else {
             SaveValidate = "El DNI ingresado ya está registrado";
+        }}catch (Exception e){
+            System.out.println("Error:"+e.getMessage());
+            SaveValidate = "No se pudo guardar, revise los datos de entrada";
         }
         return SaveValidate;
     }
@@ -56,9 +66,13 @@ public class PersonService implements IPersonService {
     @Override
     public String updatePerson(Person person) {
         String UpdateResponse = "";
-        Person personBefore = findById(person.getId());
         if (repository.findById(person.getId()).getDNI() != null) {
-            repository.update("");
+            repository.update("DNI ='" +person.getDNI()+"',"+
+                    "Name = '"+person.getName()+"'," +
+                    "LastName = '"+person.getLastName()+"'," +
+                    "Age = "+person.getAge()+ ","+
+                    "country = '"+person.getCountry()+"'" +
+                    " where id ="+person.getId());
             UpdateResponse = "Actualizado correctamente";
         } else {
             UpdateResponse = "No se pudo actualizar";

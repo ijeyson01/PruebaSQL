@@ -15,7 +15,7 @@ public class Person {
     private String name;
     private String LastName;
     private int Age;
-    private String Country;
+    private String country;
 
 
 }
