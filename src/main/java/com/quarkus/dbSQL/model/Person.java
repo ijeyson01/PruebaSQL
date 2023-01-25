@@ -9,7 +9,7 @@ import lombok.Data;
 @Entity
 public class Person {
     @Id
-    private long PersonId;
+    private Integer Id;
 
     private String DNI;
     private String name;

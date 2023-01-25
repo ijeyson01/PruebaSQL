@@ -8,7 +8,7 @@ public interface IPersonService {
 
     List<Person> findAll();
     List<Person> findUpToAge(int age);
-    Person findById(Long id);
+    Person findById(Integer id);
     String savePerson(Person person);
     String updatePerson(Person person);
 
